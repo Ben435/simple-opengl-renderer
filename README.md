@@ -1,7 +1,8 @@
 # Simple OpenGL Renderer
 
-See title for summary
+Extremely simple OpenGL Renderer
 
-Bind to a window manager and get going
-
-
+WIP:
+* Materials
+* Multiple lights
+* How to handle shaders (ship with presets vs extensible interface)
