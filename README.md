@@ -1,8 +1,16 @@
 # Simple OpenGL Renderer
 
-Extremely simple OpenGL Renderer
+Extremely simple OpenGL Renderer.
+Inspired by [Learn OpenGL](https://learnopengl.com) and early [Sparky](https://github.com/TheCherno/Sparky), but ported for Rust.
+
+See example for usage
+```bash
+cargo run --example simple-3d
+```
 
 WIP:
 * Materials
 * Multiple lights
-* How to handle shaders (ship with presets vs extensible interface)
+* Better lighting model (probably Blinn-Phong)
+* Decide how to handle shaders (ship with presets vs extensible interface)
+* Transform hierachy (thinking Unity style)
