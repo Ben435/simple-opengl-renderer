@@ -41,8 +41,12 @@ pub fn main() {
 
         {
             let mut ctx = renderer.begin();
+            let time = window.get_time();
 
-            ctx.submit(&demo_mesh, Matrix4::from_translation(vec3(0.0, 0.0, -10.0)), &shader);
+            let x: f32 = time.sin() as f32 * 2.0;
+            let y: f32 = time.cos() as f32 * 2.0;
+
+            ctx.submit(&demo_mesh, Matrix4::from_translation(vec3(x, y, -10.0)), &shader);
 
             unsafe {
                 gl::ClearColor(0.2, 0.3, 0.3, 1.0);
