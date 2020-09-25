@@ -11,7 +11,7 @@ gl = "0.14"
 cgmath = "0.17"
 wavefront_obj = "8.0"
 log = "0.4"
-glfw = { version = "0.39" }
+glfw = { version = "0.40" }
 # TODO: Figure out feature flagged stuff
 # glfw = { version = "0.39", optional = true }
 
