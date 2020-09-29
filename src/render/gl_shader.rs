@@ -7,7 +7,7 @@ use cgmath::prelude::*;
 
 const MAX_LOG: usize = 1024;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct GlShader {
     program: GLuint,
 }
@@ -52,6 +52,13 @@ impl GlShader {
         unsafe {
             let loc = self.get_uniform_location(name);
             gl::UniformMatrix4fv(loc, 1, gl::FALSE, val.as_ptr());
+        }
+    }
+
+    pub fn set_uniform_1f(&self, name: String, val: GLfloat) {
+        unsafe {
+            let loc = self.get_uniform_location(name);
+            gl::Uniform1f(loc, val);
         }
     }
 

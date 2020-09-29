@@ -1,12 +1,14 @@
 use gl;
-use std::collections::VecDeque;
+use std::collections::{HashMap};
 use std::marker::PhantomData;
 use std::ptr;
-use cgmath::{vec3,Vector3,Matrix4};
+use cgmath::{Matrix4,EuclideanSpace,Point3};
 
-use super::renderable::{Renderable};
 use crate::camera::Camera;
+use super::renderable::Renderable;
 use super::GlShader;
+use super::light::PointLight;
+use super::material::Material;
 
 // const MAX_VERTICES: usize = 10_000;
 // const MAX_VBO_SIZE: usize = MAX_VERTICES * size_of::<Vertex>();
@@ -17,21 +19,25 @@ use super::GlShader;
 /// This "manager" + "context" pattern helps guide the borrow checker, while still persisting the parent manager.
 pub struct SimpleRenderer<T : Renderable> {
     phantom: PhantomData<T>,
-    pub light_diffuse_dir: Vector3<f32>,
-    pub light_diffuse: Vector3<f32>,
+    pub light: PointLight,
 }
 
 pub struct SimpleRenderContext<'a, T : Renderable> {
-    queue: VecDeque<(&'a T, Matrix4<f32>, &'a GlShader)>,
+    shader_buckets: HashMap<&'a GlShader, Vec<RenderJob<'a, T>>>,
     renderer: &'a SimpleRenderer<T>,
+}
+
+struct RenderJob<'a, T : Renderable> {
+    pub renderable: &'a T,
+    pub transform: Matrix4<f32>,
+    pub material: &'a Material,
 }
 
 impl <'a, T: Renderable> SimpleRenderer<T> {
     pub fn new() -> SimpleRenderer<T> {
         let mut res = SimpleRenderer::<T>{
             phantom: PhantomData,
-            light_diffuse_dir: vec3(-0.2, -1.0, -0.3),
-            light_diffuse: vec3(0.5, 0.5, 0.5),
+            light: PointLight::white(Point3::new(10.0, 0.0, -5.0)),
         };
 
         res.init();
@@ -46,35 +52,68 @@ impl <'a, T: Renderable> SimpleRenderer<T> {
     /// TODO: Optimization available by carrying buffer from VecDeque between frames.
     pub fn begin(&'a self) -> SimpleRenderContext<'a, T> {
         SimpleRenderContext{
-            queue: VecDeque::new(),
+            shader_buckets: HashMap::new(),
             renderer: self,
         }
     }
 }
 
 impl <'a, T : Renderable> SimpleRenderContext<'a, T> {
-    pub fn submit(&mut self, renderable: &'a T, transform: Matrix4<f32>, shader: &'a GlShader) {
-        self.queue.push_back((renderable, transform, shader));
+    pub fn submit(&mut self, renderable: &'a T, transform: Matrix4<f32>, material: &'a Material, shader: &'a GlShader) {
+        let existing = self.shader_buckets.get_mut(shader);
+        let render_job = RenderJob{
+            renderable,
+            transform,
+            material,
+        };
+
+        if existing.is_some() {
+            let existing = existing.unwrap();
+            existing.push(render_job);
+        } else {
+            let existing = vec!(render_job);
+            self.shader_buckets.insert(shader, existing);
+        }
     }
 
     pub fn present(&mut self, camera: &Camera) {
         let vw_matrix = camera.get_view_matrix();
         let pr_matrix = camera.get_projection_matrix();
-        unsafe {
-            while let Some((r, transform, shader)) = self.queue.pop_front() {
-                r.get_vao().bind();
-                let ebo = r.get_ebo();
-                ebo.bind();
-                shader.enable();
-                shader.set_uniform_mat4("vw_matrix".to_string(), &vw_matrix);
-                shader.set_uniform_mat4("pr_matrix".to_string(), &pr_matrix);
-                shader.set_uniform_mat4("ml_matrix".to_string(), &transform);
 
-                shader.set_uniform_3f("light_dir".to_string(), &self.renderer.light_diffuse_dir);
-                shader.set_uniform_3f("light_diffuse".to_string(), &self.renderer.light_diffuse);
-
-                gl::DrawElements(gl::TRIANGLES, ebo.components as i32, gl::UNSIGNED_SHORT, ptr::null());
+        for shader in self.shader_buckets.keys() {
+            let to_render = self.shader_buckets.get(shader);
+            if to_render.is_none() {
+                // Nothing to render for this shader.
+                continue;
             }
-        };
+            let to_render = to_render.unwrap();
+
+            shader.enable();
+            shader.set_uniform_3f("view_pos".to_string(), &camera.position.to_vec());
+            shader.set_uniform_mat4("vw_matrix".to_string(), &vw_matrix);
+            shader.set_uniform_mat4("pr_matrix".to_string(), &pr_matrix);
+
+            shader.set_uniform_3f("light.position".to_string(), &self.renderer.light.position.to_vec());
+            shader.set_uniform_3f("light.ambient".to_string(), &self.renderer.light.ambient);
+            shader.set_uniform_3f("light.diffuse".to_string(), &self.renderer.light.diffuse);
+            shader.set_uniform_3f("light.specular".to_string(), &self.renderer.light.specular);
+
+            for job in to_render {
+                shader.set_uniform_mat4("ml_matrix".to_string(), &job.transform);
+
+                shader.set_uniform_3f("material.ambient".to_string(), &job.material.ambient);
+                shader.set_uniform_3f("material.diffuse".to_string(), &job.material.diffuse);
+                shader.set_uniform_3f("material.specular".to_string(), &job.material.specular);
+                shader.set_uniform_1f("material.shininess".to_string(), job.material.shininess);
+
+                job.renderable.get_vao().bind();
+                let ebo = job.renderable.get_ebo();
+                ebo.bind();
+
+                unsafe {
+                    gl::DrawElements(gl::TRIANGLES, ebo.components as i32, gl::UNSIGNED_SHORT, ptr::null());
+                }
+            }
+        }
     }
 }

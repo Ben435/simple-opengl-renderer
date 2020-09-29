@@ -18,6 +18,13 @@ pub fn main() {
     let shader = GlShader::default_shader();
 
     let demo_mesh = GlMesh::cube();
+    // let demo_material = material::Material::default();
+    let demo_material = material::Material {
+        ambient: vec3(0.24725, 0.1995, 0.0745),
+        diffuse: vec3(0.75164, 0.60648, 0.22648),
+        specular: vec3(0.628281, 0.555802, 0.366065),
+        shininess: 0.4,
+    };
 
     while !window.should_close() {
         for (_, event) in window.flush_events() {
@@ -38,7 +45,7 @@ pub fn main() {
             let x: f32 = time.sin() as f32 * 2.0;
             let y: f32 = time.cos() as f32 * 2.0;
 
-            ctx.submit(&demo_mesh, Matrix4::from_translation(vec3(x, y, -10.0)), &shader);
+            ctx.submit(&demo_mesh, Matrix4::from_translation(vec3(x, y, -10.0)), &demo_material, &shader);
 
             unsafe {
                 gl::ClearColor(0.2, 0.3, 0.3, 1.0);

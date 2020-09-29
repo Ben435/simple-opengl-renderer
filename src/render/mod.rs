@@ -7,6 +7,10 @@ mod gl_shader;
 mod gl_mesh;
 mod gl_model;
 
+pub mod common;
+pub mod light;
+pub mod material;
+
 pub mod gl_errors;
 
 pub use simple_renderer::SimpleRenderer;
