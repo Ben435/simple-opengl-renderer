@@ -105,6 +105,7 @@ impl ModelBuilder {
                             .fold((Vec::new(), Vec::new()), |(vertices, indices), vtn| {
                                 let (global_vertex_index, _maybe_tex_index, maybe_norm_index) = vtn;
                                 
+                                // TODO: This is borked!
                                 (vertices, indices)
                             });
 

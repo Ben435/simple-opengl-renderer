@@ -1,7 +1,6 @@
-use simple_opengl_renderer::render::*;
 use simple_opengl_renderer::window::*;
 use simple_opengl_renderer::camera::*;
-use simple_opengl_renderer::render::ogl::*;
+use simple_opengl_renderer::render::{*,common::*,ogl::*};
 use log::{debug,info,LevelFilter};
 use env_logger::{Builder};
 use cgmath::{Matrix4,vec3};
@@ -21,9 +20,9 @@ pub fn main() {
     let demo_mesh = GlMesh::cube();
     // Gold from (http://devernay.free.fr/cours/opengl/materials.html)
     let demo_material = material::Material {
-        ambient: vec3(0.24725, 0.1995, 0.0745),
-        diffuse: vec3(0.75164, 0.60648, 0.22648),
-        specular: vec3(0.628281, 0.555802, 0.366065),
+        ambient: Color::new(0.24725, 0.1995, 0.0745),
+        diffuse: Color::new(0.75164, 0.60648, 0.22648),
+        specular: Color::new(0.628281, 0.555802, 0.366065),
         shininess: 0.4,
     };
 
