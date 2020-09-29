@@ -1,12 +1,12 @@
-use super::renderable::{Renderable,Index,Vertex};
+use super::gl_vertex::{Index,Vertex};
 use super::gl_buffer::GlBuffer;
 use super::gl_vertex_array::GlVertexArray;
 use super::gl_index_buffer::GlIndexBuffer;
 
 #[derive(Debug)]
 pub struct GlMesh {
-    vao: GlVertexArray,
-    ebo: GlIndexBuffer,
+    pub vao: GlVertexArray,
+    pub ebo: GlIndexBuffer,
 }
 
 impl GlMesh {
@@ -84,15 +84,5 @@ impl GlMesh {
             vao,
             ebo: GlIndexBuffer::new(&indices),
         }
-    }
-}
-
-impl <'a> Renderable for GlMesh {
-    fn get_vao(&self) -> &GlVertexArray {
-        &self.vao
-    }
-
-    fn get_ebo(&self) -> &GlIndexBuffer {
-        &self.ebo
     }
 }

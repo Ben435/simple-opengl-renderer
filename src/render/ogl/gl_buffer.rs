@@ -1,7 +1,7 @@
 use gl;
 use std::mem::size_of;
 use std::ffi::c_void;
-use super::renderable::Vertex;
+use super::gl_vertex::Vertex;
 
 #[derive(Debug)]
 pub struct GlBuffer {

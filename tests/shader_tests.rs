@@ -1,5 +1,5 @@
 mod common;
-use simple_opengl_renderer::render::GlShader;
+use simple_opengl_renderer::render::ogl::GlShader;
 
 #[test]
 fn test_default_shader() {

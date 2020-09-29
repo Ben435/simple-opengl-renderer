@@ -6,7 +6,7 @@ use cgmath::{Matrix4,EuclideanSpace,Point3};
 
 use crate::camera::Camera;
 use super::renderable::Renderable;
-use super::GlShader;
+use super::ogl::GlShader;
 use super::light::PointLight;
 use super::material::Material;
 
@@ -94,16 +94,16 @@ impl <'a, T : Renderable> SimpleRenderContext<'a, T> {
             shader.set_uniform_mat4("pr_matrix".to_string(), &pr_matrix);
 
             shader.set_uniform_3f("light.position".to_string(), &self.renderer.light.position.to_vec());
-            shader.set_uniform_3f("light.ambient".to_string(), &self.renderer.light.ambient);
-            shader.set_uniform_3f("light.diffuse".to_string(), &self.renderer.light.diffuse);
-            shader.set_uniform_3f("light.specular".to_string(), &self.renderer.light.specular);
+            shader.set_uniform_3f("light.ambient".to_string(), &self.renderer.light.ambient.into());
+            shader.set_uniform_3f("light.diffuse".to_string(), &self.renderer.light.diffuse.into());
+            shader.set_uniform_3f("light.specular".to_string(), &self.renderer.light.specular.into());
 
             for job in to_render {
                 shader.set_uniform_mat4("ml_matrix".to_string(), &job.transform);
 
-                shader.set_uniform_3f("material.ambient".to_string(), &job.material.ambient);
-                shader.set_uniform_3f("material.diffuse".to_string(), &job.material.diffuse);
-                shader.set_uniform_3f("material.specular".to_string(), &job.material.specular);
+                shader.set_uniform_3f("material.ambient".to_string(), &job.material.ambient.into());
+                shader.set_uniform_3f("material.diffuse".to_string(), &job.material.diffuse.into());
+                shader.set_uniform_3f("material.specular".to_string(), &job.material.specular.into());
                 shader.set_uniform_1f("material.shininess".to_string(), job.material.shininess);
 
                 job.renderable.get_vao().bind();

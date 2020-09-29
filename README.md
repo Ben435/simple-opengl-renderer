@@ -9,7 +9,7 @@ cargo run --example simple-3d
 ```
 
 WIP:
-* Materials
+* Textures
 * Multiple lights
 * Better lighting model (probably Blinn-Phong)
 * Decide how to handle shaders (ship with presets vs extensible interface)

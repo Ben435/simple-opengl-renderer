@@ -11,16 +11,16 @@ pub struct PointLight {
 
 impl PointLight {
     pub fn white(position: Point3<f32>) -> PointLight {
-        let color: Color = vec3(1.0, 1.0, 1.0);
+        let color: Vector3<f32> = vec3(1.0, 1.0, 1.0);
 
         let diffuse = color * 0.5;
         let ambient = diffuse * 0.2;
-        let specular = vec3(1.0, 1.0, 1.0);
+        let specular = Color::new(1.0, 1.0, 1.0);
 
         PointLight {
             position,
-            diffuse,
-            ambient,
+            diffuse: Color::from(diffuse),
+            ambient: Color::from(ambient),
             specular,
         }
     }

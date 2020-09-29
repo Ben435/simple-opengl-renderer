@@ -4,7 +4,7 @@ struct Material {
     vec3 diffuse;
     vec3 specular;
     float shininess;
-}; 
+};
 
 struct PointLight {
     vec3 position;

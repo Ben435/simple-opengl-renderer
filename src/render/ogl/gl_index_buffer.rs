@@ -1,7 +1,7 @@
 use gl;
 use std::mem::size_of;
 use std::ffi::c_void;
-use super::renderable::Index;
+use super::gl_vertex::Index;
 
 #[derive(Debug)]
 pub struct GlIndexBuffer {
