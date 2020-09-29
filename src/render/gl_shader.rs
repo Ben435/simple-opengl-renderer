@@ -7,7 +7,7 @@ use cgmath::prelude::*;
 
 const MAX_LOG: usize = 1024;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct GlShader {
     program: GLuint,
 }
@@ -21,6 +21,17 @@ impl GlShader {
 
     pub fn builder() -> GlShaderBuilder {
         GlShaderBuilder::new()
+    }
+
+
+    pub fn default_shader() -> GlShader {
+        let frag_shader = include_str!("./shaders/shader.frag");
+        let vert_shader = include_str!("./shaders/shader.vert");
+
+        GlShader::builder()
+            .with_frag_shader(CString::new(frag_shader).expect("Failed to convert frag shader to CString"))
+            .with_vert_shader(CString::new(vert_shader).expect("Failed to convert vert shader to CString"))
+            .build()
     }
 
     pub fn set_uniform_2f(&self, name: String, val: &Vector2<GLfloat>) {
@@ -67,6 +78,14 @@ impl GlShader {
     pub fn disable(&self) {
         unsafe {
             gl::UseProgram(0);
+        }
+    }
+}
+
+impl Drop for GlShader {
+    fn drop(&mut self) {
+        unsafe {
+            gl::DeleteProgram(self.program);
         }
     }
 }

@@ -3,7 +3,6 @@ use simple_opengl_renderer::window::*;
 use simple_opengl_renderer::camera::*;
 use log::{debug,info,LevelFilter};
 use env_logger::{Builder};
-use std::ffi::CString;
 use cgmath::{Matrix4,vec3};
 
 pub fn main() {
@@ -16,13 +15,7 @@ pub fn main() {
     let cam = Camera::default();
     let renderer = SimpleRenderer::<GlMesh>::new();
 
-    let frag_shader = include_str!("./assets/shader.frag");
-    let vert_shader = include_str!("./assets/shader.vert");
-
-    let shader = GlShader::builder()
-        .with_frag_shader(CString::new(frag_shader).expect("Failed to convert frag shader to CString"))
-        .with_vert_shader(CString::new(vert_shader).expect("Failed to convert vert shader to CString"))
-        .build();
+    let shader = GlShader::default_shader();
 
     let demo_mesh = GlMesh::cube();
 
@@ -30,8 +23,7 @@ pub fn main() {
         for (_, event) in window.flush_events() {
             match event {
                 glfw::WindowEvent::FramebufferSize(width, height) => {
-                    // make sure the viewport matches the new window dimensions; note that width and
-                    // height will be significantly larger than specified on retina displays.
+                    // make sure the viewport matches the new window dimensions
                     debug!("Resize to {}, {}", width, height);
                     unsafe { gl::Viewport(0, 0, width, height) }
                 },
