@@ -1,5 +1,4 @@
 use cgmath::{vec3,Vector3};
-use wavefront_obj::mtl::Color as WavefrontColor;
 
 #[derive(Debug,Clone,Copy)]
 pub struct Color {
@@ -34,12 +33,12 @@ impl From<Vector3<f32>> for Color {
     }
 }
 
-impl From<WavefrontColor> for Color {
-    fn from(col: WavefrontColor) -> Self {
+impl From<[f32; 3]> for Color {
+    fn from(col: [f32; 3]) -> Self {
         Color {
-            r: col.r as f32,
-            g: col.g as f32,
-            b: col.b as f32,
+            r: col[0],
+            g: col[1],
+            b: col[2],
         }
     }
 }

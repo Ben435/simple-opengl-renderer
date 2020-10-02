@@ -1,5 +1,5 @@
 use super::common::Color;
-use wavefront_obj::mtl::Material as WavefrontMaterial;
+use tobj::Material as TobjMaterial;
 
 #[derive(Debug,Clone,Copy)]
 pub struct Material {
@@ -21,13 +21,13 @@ impl Default for Material {
     }
 }
 
-impl From<&WavefrontMaterial> for Material {
-    fn from(mat: &WavefrontMaterial) -> Self {
+impl From<&TobjMaterial> for Material {
+    fn from(mat: &TobjMaterial) -> Self {
         Material {
-            ambient: Color::from(mat.color_ambient),
-            diffuse: Color::from(mat.color_diffuse),
-            specular: Color::from(mat.color_specular),
-            shininess: mat.specular_coefficient as f32,
+            ambient: Color::from(mat.ambient),
+            diffuse: Color::from(mat.diffuse),
+            specular: Color::from(mat.specular),
+            shininess: mat.shininess as f32,
         }
     }
 }

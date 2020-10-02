@@ -15,8 +15,8 @@ pub struct Camera {
     pub up: Vector3<f32>,
     pub right: Vector3<f32>,
     pub world_up: Vector3<f32>,
-    pub viewport_height: u32,
-    pub viewport_width: u32,
+    pub viewport_height: i32,
+    pub viewport_width: i32,
     // Euler Angles
     pub yaw: f32,
     pub pitch: f32,
@@ -67,6 +67,11 @@ impl Camera {
         if self.zoom >= 1.0 && self.zoom <= 45.0 {
             self.zoom = (self.zoom - yoffset).max(1.0).min(45.0);
         }
+    }
+
+    pub fn update_viewport(&mut self, new_width: i32, new_height: i32) {
+        self.viewport_width = new_width;
+        self.viewport_height = new_height;
     }
 
     pub fn update_camera_vectors(&mut self) {

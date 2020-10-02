@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 gl = "0.14"
 cgmath = "0.17"
-wavefront_obj = "8.0"
+tobj = "2.0"
 log = "0.4"
 glfw = { version = "0.40" }
 # TODO: Figure out feature flagged stuff
