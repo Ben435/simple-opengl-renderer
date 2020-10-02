@@ -12,7 +12,7 @@ pub fn main() {
     info!("Logger initialized");
 
     let mut window = Window::new("Simple Renderer", 800, 600).expect("Failed to init window");
-    let cam = Camera::default();
+    let mut cam = Camera::default();
     let renderer = SimpleRenderer::<GlMesh>::new();
 
     let shader = GlShader::default_shader();
@@ -33,6 +33,7 @@ pub fn main() {
                     // make sure the viewport matches the new window dimensions
                     debug!("Resize to {}, {}", width, height);
                     unsafe { gl::Viewport(0, 0, width, height) }
+                    cam.update_viewport(width, height);
                 },
                 _ => {},
             }

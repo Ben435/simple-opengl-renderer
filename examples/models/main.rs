@@ -4,7 +4,7 @@ use simple_opengl_renderer::render::{*, ogl::*};
 use simple_opengl_renderer::resources::*;
 use log::{debug,info,LevelFilter};
 use env_logger::{Builder};
-use cgmath::{Matrix4,vec3};
+use cgmath::{Matrix4,vec3,Deg};
 use std::path::Path;
 
 pub fn main() {
@@ -45,9 +45,10 @@ pub fn main() {
 
         {
             let mut ctx = renderer.begin();
+            let transform = Matrix4::from_translation(vec3(0.0, -0.2, -10.0)) * Matrix4::from_angle_x(Deg(45.0)) * Matrix4::from_scale(10.0);
 
             room_model.objects.iter().for_each(|obj| {
-                ctx.submit(&obj.mesh, Matrix4::from_translation(vec3(0.0, -0.2, -1.0)), &obj.material, &shader);
+                ctx.submit(&obj.mesh, transform, &obj.material, &shader);
             });
 
 
