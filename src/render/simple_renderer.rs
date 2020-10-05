@@ -2,12 +2,12 @@ use gl;
 use std::collections::{HashMap};
 use std::marker::PhantomData;
 use std::ptr;
-use cgmath::{Matrix4,EuclideanSpace,Point3};
+use cgmath::{Matrix4,EuclideanSpace,Point3,vec3};
 
 use crate::camera::Camera;
 use super::renderable::Renderable;
 use super::ogl::GlShader;
-use super::light::PointLight;
+use super::light::{PointLight,DirectionalLight};
 use super::material::Material;
 
 // const MAX_VERTICES: usize = 10_000;
@@ -19,7 +19,8 @@ use super::material::Material;
 /// This "manager" + "context" pattern helps guide the borrow checker, while still persisting the parent manager.
 pub struct SimpleRenderer<T : Renderable> {
     phantom: PhantomData<T>,
-    pub light: PointLight,
+    pub point_light: PointLight,
+    pub directional_light: DirectionalLight,
 }
 
 pub struct SimpleRenderContext<'a, T : Renderable> {
@@ -37,7 +38,8 @@ impl <'a, T: Renderable> SimpleRenderer<T> {
     pub fn new() -> SimpleRenderer<T> {
         let mut res = SimpleRenderer::<T>{
             phantom: PhantomData,
-            light: PointLight::white(Point3::new(10.0, 0.0, -5.0)),
+            point_light: PointLight::white(Point3::new(10.0, 0.0, -5.0)),
+            directional_light: DirectionalLight::white(vec3(0.0, 10.0, 0.0))
         };
 
         res.init();
@@ -93,10 +95,18 @@ impl <'a, T : Renderable> SimpleRenderContext<'a, T> {
             shader.set_uniform_mat4("vw_matrix".to_string(), &vw_matrix);
             shader.set_uniform_mat4("pr_matrix".to_string(), &pr_matrix);
 
-            shader.set_uniform_3f("light.position".to_string(), &self.renderer.light.position.to_vec());
-            shader.set_uniform_3f("light.ambient".to_string(), &self.renderer.light.ambient.into());
-            shader.set_uniform_3f("light.diffuse".to_string(), &self.renderer.light.diffuse.into());
-            shader.set_uniform_3f("light.specular".to_string(), &self.renderer.light.specular.into());
+            shader.set_uniform_3f("point_light.position".to_string(), &self.renderer.point_light.position.to_vec());
+            shader.set_uniform_3f("point_light.ambient".to_string(), &self.renderer.point_light.ambient.into());
+            shader.set_uniform_3f("point_light.diffuse".to_string(), &self.renderer.point_light.diffuse.into());
+            shader.set_uniform_3f("point_light.specular".to_string(), &self.renderer.point_light.specular.into());
+            shader.set_uniform_1f("point_light.constant".to_string(), 1.0);
+            shader.set_uniform_1f("point_light.linear".to_string(), 0.09);
+            shader.set_uniform_1f("point_light.quadratic".to_string(), 0.032);
+
+            shader.set_uniform_3f("directional_light.direction".to_string(), &self.renderer.directional_light.direction);
+            shader.set_uniform_3f("directional_light.ambient".to_string(), &self.renderer.directional_light.ambient.into());
+            shader.set_uniform_3f("directional_light.diffuse".to_string(), &self.renderer.directional_light.diffuse.into());
+            shader.set_uniform_3f("directional_light.specular".to_string(), &self.renderer.directional_light.specular.into());
 
             for job in to_render {
                 shader.set_uniform_mat4("ml_matrix".to_string(), &job.transform);

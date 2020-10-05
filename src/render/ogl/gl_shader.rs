@@ -63,6 +63,7 @@ impl GlShader {
     }
 
     unsafe fn get_uniform_location(&self, name: String) -> GLint {
+        // TODO: Cache this!
         let cstr_name = match CString::new(name.to_string()) {
             Ok(s) => s,
             Err(e) => panic!(format!("Failed to translate String to CString: {}", e)),
@@ -149,6 +150,7 @@ impl GlShaderBuilder {
 
             if log_len > 0 {
                 gl::GetShaderInfoLog(shader_id, log_len.min(MAX_LOG as i32), std::ptr::null_mut(), self.log_buffer.as_mut_ptr() as *mut gl::types::GLchar);
+                self.log_buffer.truncate(log_len as usize);
                 error!("Failed to compile shader: {}", String::from_utf8_lossy(&self.log_buffer));
             } else {
                 error!("Failed to compile with no log?");

@@ -19,7 +19,7 @@ pub fn main() {
 
     let demo_mesh = GlMesh::cube();
     // Gold from (http://devernay.free.fr/cours/opengl/materials.html)
-    let demo_material = material::Material {
+    let demo_material = Material {
         ambient: Color::new(0.24725, 0.1995, 0.0745),
         diffuse: Color::new(0.75164, 0.60648, 0.22648),
         specular: Color::new(0.628281, 0.555802, 0.366065),

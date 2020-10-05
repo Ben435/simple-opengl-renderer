@@ -13,6 +13,7 @@ out vec3 Normal;
 void main()
 {
     FragPos = vec3(ml_matrix * vec4(aPos, 1.0f));
+    // TODO: Don't invert matrices on the GPU!
     Normal = mat3(transpose(inverse(ml_matrix))) * aNormal;
     gl_Position = pr_matrix * vw_matrix * vec4(FragPos, 1.0f);
 }
