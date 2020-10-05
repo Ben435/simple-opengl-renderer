@@ -20,7 +20,7 @@ pub fn main() {
 
     let shader = GlShader::default_shader();
 
-    let model_path = resource_loader.resolve_path("assets/donut.obj").unwrap();
+    let model_path = resource_loader.resolve_path("assets/teacup.obj").unwrap();
     info!("Loading: {:?}", model_path);   
  
     let room_model = Model::builder()
@@ -45,7 +45,10 @@ pub fn main() {
 
         {
             let mut ctx = renderer.begin();
-            let transform = Matrix4::from_translation(vec3(0.0, -0.2, -10.0)) * Matrix4::from_angle_x(Deg(45.0)) * Matrix4::from_scale(10.0);
+            let time = window.get_time() as f32;
+            let rotation = (time % 360.0) * 10.0;
+            let transform = Matrix4::from_translation(vec3(0.0, -1.0, -10.0)) * Matrix4::from_angle_x(Deg(45.0)) * Matrix4::from_angle_y(Deg(rotation)) * Matrix4::from_scale(1.0);
+            // let transform = Matrix4::from_translation(vec3(0.0, -0.2, -10.0)) * Matrix4::from_angle_x(Deg(45.0)) * Matrix4::from_scale(10.0);
 
             room_model.objects.iter().for_each(|obj| {
                 ctx.submit(&obj.mesh, transform, &obj.material, &shader);
