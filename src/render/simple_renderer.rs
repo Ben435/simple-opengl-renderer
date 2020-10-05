@@ -39,7 +39,7 @@ impl <'a, T: Renderable> SimpleRenderer<T> {
         let mut res = SimpleRenderer::<T>{
             phantom: PhantomData,
             point_light: PointLight::white(Point3::new(10.0, 0.0, -5.0)),
-            directional_light: DirectionalLight::white(vec3(0.0, 10.0, 0.0))
+            directional_light: DirectionalLight::white(vec3(0.0, 0.0, 1.0))
         };
 
         res.init();

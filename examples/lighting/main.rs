@@ -4,7 +4,7 @@ use simple_opengl_renderer::render::{*, ogl::*};
 use simple_opengl_renderer::resources::*;
 use log::{debug,info,LevelFilter};
 use env_logger::{Builder};
-use cgmath::{Matrix4,vec3,Deg};
+use cgmath::{Matrix4,vec3,Deg,Rotation,Rotation3,Vector3,Quaternion};
 use std::path::Path;
 
 pub fn main() {
@@ -15,23 +15,13 @@ pub fn main() {
 
     let mut window = Window::new("Model Renderer", 800, 600).expect("Failed to init window");
     let mut cam = Camera::default();
-    let renderer = SimpleRenderer::<GlMesh>::new();
-    let resource_loader = ResourceLoader::from_relative_exe_path(Path::new("../../../examples/models")).unwrap();
+    let mut renderer = SimpleRenderer::<GlMesh>::new();
+    let resource_loader = ResourceLoader::from_relative_exe_path(Path::new("../../../examples/lighting")).unwrap();
 
     let shader = GlShader::default_shader();
 
-    let model_path = resource_loader.resolve_path("assets/teacup.obj").unwrap();
     let sphere_path = resource_loader.resolve_path("assets/icosphere.obj").unwrap();
-    let base = Model::builder().with_object(
-        GlMesh::square(),
-        Material::default(),
-    ).build();
-
-    info!("Loading: {:?}", model_path);   
  
-    let room_model = Model::builder()
-        .with_obj_file(model_path)
-        .build();
     let sphere_model = Model::builder()
         .with_obj_file(sphere_path)
         .build();
@@ -50,23 +40,17 @@ pub fn main() {
                 _ => {},
             }
         };
+        let time = window.get_time() as f32;
+        let rotation = (time % 360.0) * 50.0;
+
+        let quat: Quaternion<f32> = Quaternion::from_angle_z(Deg(rotation));
+        let new_dir = quat.rotate_vector(Vector3::<f32>::unit_y());
+        renderer.directional_light.direction = new_dir;
 
         {
             let mut ctx = renderer.begin();
-            let time = window.get_time() as f32;
-            let rotation = (time % 360.0) * 10.0;
-            let transform = Matrix4::from_translation(vec3(0.0, -1.0, -10.0)) * Matrix4::from_angle_x(Deg(45.0)) * Matrix4::from_angle_y(Deg(rotation)) * Matrix4::from_scale(1.0);
 
-            room_model.objects.iter().for_each(|obj| {
-                ctx.submit(&obj.mesh, transform, &obj.material, &shader);
-            });
-
-            let transform = Matrix4::from_translation(vec3(-5.0, -5.0, -6.0)) * Matrix4::from_angle_x(Deg(-45.0)) * Matrix4::from_scale(10.0);
-            base.objects.iter().for_each(|obj| {
-                ctx.submit(&obj.mesh, transform, &obj.material, &shader);
-            });
-
-            let transform = Matrix4::from_translation(vec3(3.0, 0.0, -10.0)) * Matrix4::from_angle_x(Deg(-45.0)) * Matrix4::from_scale(0.5);
+            let transform = Matrix4::from_translation(vec3(0.0, 0.0, -5.0)) * Matrix4::from_angle_y(Deg(rotation)) * Matrix4::from_scale(0.5);
             sphere_model.objects.iter().for_each(|obj| {
                 ctx.submit(&obj.mesh, transform, &obj.material, &shader);
             });

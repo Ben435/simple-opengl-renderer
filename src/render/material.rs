@@ -11,11 +11,11 @@ pub struct Material {
 
 impl Default for Material {
     fn default() -> Material {
-        let base_color = Color::new(1.0, 0.5, 0.2); // Orange
+        let base_color = Color::rgb(1.0, 0.5, 0.2); // Orange
         Material {
             ambient: base_color,
             diffuse: base_color,
-            specular: Color::new(1.0, 1.0, 1.0),
+            specular: Color::rgb(1.0, 1.0, 1.0),
             shininess: 32.0,
         }
     }

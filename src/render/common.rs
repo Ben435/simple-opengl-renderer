@@ -8,7 +8,7 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn new(r: f32, g: f32, b: f32) -> Self {
+    pub fn rgb(r: f32, g: f32, b: f32) -> Self {
         Color {
             r,
             g,
@@ -17,18 +17,18 @@ impl Color {
     }
 }
 
-impl Into<Vector3<f32>> for Color {
-    fn into(self) -> Vector3<f32> {
-        vec3(self.r, self.g, self.b)
+impl From<Color> for Vector3<f32> {
+    fn from(color: Color) -> Vector3<f32> {
+        vec3(color.r, color.g, color.b)
     }
 }
 
 impl From<Vector3<f32>> for Color {
-    fn from(v: Vector3<f32>) -> Self {
+    fn from(vec: Vector3<f32>) -> Color {
         Color {
-            r: v.x,
-            g: v.y,
-            b: v.z,
+            r: vec.x,
+            g: vec.y,
+            b: vec.z,
         }
     }
 }

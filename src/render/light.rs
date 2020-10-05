@@ -11,16 +11,14 @@ pub struct PointLight {
 
 impl PointLight {
     pub fn white(position: Point3<f32>) -> PointLight {
-        let color: Vector3<f32> = vec3(1.0, 1.0, 1.0);
+        let color = Color::rgb(1.0, 1.0, 1.0);
 
-        let diffuse = color * 0.5;
-        let ambient = diffuse * 0.2;
-        let specular = Color::new(1.0, 1.0, 1.0);
+        let (ambient, diffuse, specular) = standard_split(color);
 
         PointLight {
             position,
-            diffuse: Color::from(diffuse),
-            ambient: Color::from(ambient),
+            ambient,
+            diffuse,
             specular,
         }
     }
@@ -36,17 +34,25 @@ pub struct DirectionalLight {
 
 impl DirectionalLight {
     pub fn white(direction: Vector3<f32>) -> DirectionalLight {
-        let color: Vector3<f32> = vec3(1.0, 1.0, 1.0);
+        let color = Color::rgb(1.0, 1.0, 1.0);
 
-        let diffuse = color * 0.5;
-        let ambient = diffuse * 0.2;
-        let specular = Color::new(1.0, 1.0, 1.0);
+        let (ambient, diffuse, specular) = standard_split(color);
 
         DirectionalLight {
             direction,
-            diffuse: Color::from(diffuse),
-            ambient: Color::from(ambient),
+            ambient,
+            diffuse,
             specular,
         }
     }
+}
+
+/// Split color into ambient + diffuse + specular
+fn standard_split(color: Color) -> (Color, Color, Color) {
+    let vec_color: Vector3<f32> = color.into();
+    let diffuse = vec_color * 0.5;
+    let ambient = diffuse * 0.2;
+    let specular = vec3(1.0, 1.0, 1.0);
+
+    return (ambient.into(), diffuse.into(), specular.into())
 }

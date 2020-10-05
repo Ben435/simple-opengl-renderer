@@ -20,9 +20,9 @@ pub fn main() {
     let demo_mesh = GlMesh::cube();
     // Gold from (http://devernay.free.fr/cours/opengl/materials.html)
     let demo_material = Material {
-        ambient: Color::new(0.24725, 0.1995, 0.0745),
-        diffuse: Color::new(0.75164, 0.60648, 0.22648),
-        specular: Color::new(0.628281, 0.555802, 0.366065),
+        ambient: Color::rgb(0.24725, 0.1995, 0.0745),
+        diffuse: Color::rgb(0.75164, 0.60648, 0.22648),
+        specular: Color::rgb(0.628281, 0.555802, 0.366065),
         shininess: 0.4,
     };
 
@@ -46,7 +46,7 @@ pub fn main() {
             let x: f32 = time.sin() as f32 * 2.0;
             let y: f32 = time.cos() as f32 * 2.0;
 
-            ctx.submit(&demo_mesh, Matrix4::from_translation(vec3(x, y, -10.0)), &demo_material, &shader);
+            ctx.submit(&demo_mesh, Matrix4::from_translation(vec3(x, y, -6.0)), &demo_material, &shader);
 
             unsafe {
                 gl::ClearColor(0.2, 0.3, 0.3, 1.0);
