@@ -48,10 +48,8 @@ impl ModelBuilder {
     /// TODO: Handles textures (currently only verts + normals)
     pub fn with_obj_file<P>(mut self, obj_file_path: P) -> Self 
         where P: AsRef<Path> + Debug {
-        info!("About to load file");
-        let (objs, materials) = tobj::load_obj(obj_file_path, true).expect("Failed to load file");
+        let (objs, materials) = tobj::load_obj(&obj_file_path, true).expect(&format!("Failed to load file: {:?}", &obj_file_path));
         let default_material = Material::default();
-        info!("Loaded file");
 
         let materials: Vec<Material> = materials.iter().map(|material| Material::from(material)).collect();
 

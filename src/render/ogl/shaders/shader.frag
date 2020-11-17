@@ -88,10 +88,10 @@ vec3 apply_directional_light(in DirectionalLight light, in Material material, in
 
 void main()
 {
-    vec3 output = vec3(0.0);
+    vec3 result = vec3(0.0);
     vec3 norm = normalize(Normal);
-    output += apply_point_light(point_light, material, norm);
-    output += apply_directional_light(directional_light, material, norm);
+    result += apply_point_light(point_light, material, norm);
+    result += apply_directional_light(directional_light, material, norm);
 
-    FragColor = vec4(output, 1.0);
+    FragColor = vec4(result, 1.0);
 }

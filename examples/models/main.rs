@@ -21,7 +21,6 @@ pub fn main() {
     let shader = GlShader::default_shader();
 
     let model_path = resource_loader.resolve_path("assets/teacup.obj").unwrap();
-    let sphere_path = resource_loader.resolve_path("assets/icosphere.obj").unwrap();
     let base = Model::builder().with_object(
         GlMesh::square(),
         Material::default(),
@@ -31,9 +30,6 @@ pub fn main() {
  
     let room_model = Model::builder()
         .with_obj_file(model_path)
-        .build();
-    let sphere_model = Model::builder()
-        .with_obj_file(sphere_path)
         .build();
 
     info!("Model loaded!");
@@ -63,11 +59,6 @@ pub fn main() {
 
             let transform = Matrix4::from_translation(vec3(-5.0, -5.0, -6.0)) * Matrix4::from_angle_x(Deg(-45.0)) * Matrix4::from_scale(10.0);
             base.objects.iter().for_each(|obj| {
-                ctx.submit(&obj.mesh, transform, &obj.material, &shader);
-            });
-
-            let transform = Matrix4::from_translation(vec3(3.0, 0.0, -10.0)) * Matrix4::from_angle_x(Deg(-45.0)) * Matrix4::from_scale(0.5);
-            sphere_model.objects.iter().for_each(|obj| {
                 ctx.submit(&obj.mesh, transform, &obj.material, &shader);
             });
 
